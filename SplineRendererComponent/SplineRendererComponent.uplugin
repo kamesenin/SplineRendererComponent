@@ -1,0 +1,25 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "1.0",
+  "FriendlyName": "Spline Renderer Component",
+  "Description": "Renders spline line at runtime",
+  "Category": "Graphics",
+  "CreatedBy": "Tomek",
+  "CreatedByURL": "",
+  "DocsURL": "",
+  "MarketplaceURL": "",
+  "SupportURL": "",
+  "CanContainContent": true,
+  "IsBetaVersion": false,
+  "IsExperimentalVersion": false,
+  "Installed": false,
+  "Modules": [
+	{
+	  "Name": "SplineRendererComponent",
+	  "Type": "Runtime",
+	  "LoadingPhase": "Default",
+	  "WhitelistPlatforms": [ "Win64", "Android", "Linux", "Mac" ]
+	}
+  ]
+}
