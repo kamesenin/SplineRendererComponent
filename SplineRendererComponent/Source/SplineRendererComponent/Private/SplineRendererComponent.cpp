@@ -80,7 +80,7 @@ FPrimitiveSceneProxy* USplineRendererComponent::CreateSceneProxy()
 
 void USplineRendererComponent::DrawSpline(FPrimitiveDrawInterface* PDI, const FSceneView* View, const FInterpCurveVector& SplineInfo, const FMatrix& LocalToWorld, const FLinearColor& LineColor, uint8 DepthPriorityGroup, const float Thickness, const ESplineDrawingMode SplineDrawingMode)
 {
-	const int32 GrabHandleSize = 6;
+	int32 GrabHandleSize = 6;
 	FVector OldKeyPos(0);
 
 	const int32 NumPoints = SplineInfo.Points.Num();
@@ -91,6 +91,7 @@ void USplineRendererComponent::DrawSpline(FPrimitiveDrawInterface* PDI, const FS
 
 		if (SplineDrawingMode == ESplineDrawingMode::JustPoints || SplineDrawingMode == ESplineDrawingMode::DrawAll)
 		{
+			GrabHandleSize = SplineDrawingMode == ESplineDrawingMode::JustPoints ? Thickness : GrabHandleSize;
 			// Draw the keypoint
 			if (KeyIdx < NumPoints)
 			{
