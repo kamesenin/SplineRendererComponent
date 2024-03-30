@@ -3,7 +3,7 @@
 USplineRendererComponent::USplineRendererComponent()
 	: LineThickness(1.f)
 	, LineColor(FLinearColor::White)
-	, DrawPoints(true)
+	, SplineDrawingMode(ESplineDrawingMode::DrawAll)
 {}
 
 FPrimitiveSceneProxy* USplineRendererComponent::CreateSceneProxy()
@@ -22,7 +22,7 @@ FPrimitiveSceneProxy* USplineRendererComponent::CreateSceneProxy()
 			, SplineInfo(InComponent->SplineCurves.Position)
 			, LineColor(InComponent->LineColor)
 			, Thickness(InComponent->LineThickness)
-			, DrawPoints(InComponent->DrawPoints)
+			, SplineDrawingMode(InComponent->SplineDrawingMode)
 		{}
 
 		virtual void GetDynamicMeshElements(const TArray<const FSceneView*>& Views, const FSceneViewFamily& ViewFamily, uint32 VisibilityMap, FMeshElementCollector& Collector) const override
@@ -50,7 +50,7 @@ FPrimitiveSceneProxy* USplineRendererComponent::CreateSceneProxy()
 						continue;
 					}
 
-					USplineRendererComponent::DrawSpline(PDI, View, SplineInfo, LocalToWorld, LineColor, SDPG_World, Thickness, DrawPoints);
+					USplineRendererComponent::DrawSpline(PDI, View, SplineInfo, LocalToWorld, LineColor, SDPG_World, Thickness, SplineDrawingMode);
 				}
 			}
 		}
@@ -72,13 +72,13 @@ FPrimitiveSceneProxy* USplineRendererComponent::CreateSceneProxy()
 		FInterpCurveVector SplineInfo;
 		FLinearColor LineColor;
 		float Thickness;
-		bool DrawPoints;
+		ESplineDrawingMode SplineDrawingMode;
 	};
 
 	return new FSplineSceneProxy(this);
 }
 
-void USplineRendererComponent::DrawSpline(FPrimitiveDrawInterface* PDI, const FSceneView* View, const FInterpCurveVector& SplineInfo, const FMatrix& LocalToWorld, const FLinearColor& LineColor, uint8 DepthPriorityGroup, const float Thickness, const bool DrawPoints)
+void USplineRendererComponent::DrawSpline(FPrimitiveDrawInterface* PDI, const FSceneView* View, const FInterpCurveVector& SplineInfo, const FMatrix& LocalToWorld, const FLinearColor& LineColor, uint8 DepthPriorityGroup, const float Thickness, const ESplineDrawingMode SplineDrawingMode)
 {
 	const int32 GrabHandleSize = 6;
 	FVector OldKeyPos(0);
@@ -89,7 +89,7 @@ void USplineRendererComponent::DrawSpline(FPrimitiveDrawInterface* PDI, const FS
 	{
 		const FVector NewKeyPos = LocalToWorld.TransformPosition(SplineInfo.Eval(static_cast<float>(KeyIdx), FVector(0)));
 
-		if (DrawPoints == true)
+		if (SplineDrawingMode == ESplineDrawingMode::JustPoints || SplineDrawingMode == ESplineDrawingMode::DrawAll)
 		{
 			// Draw the keypoint
 			if (KeyIdx < NumPoints)
@@ -99,7 +99,7 @@ void USplineRendererComponent::DrawSpline(FPrimitiveDrawInterface* PDI, const FS
 		}		
 
 		// If not the first keypoint, draw a line to the previous keypoint.
-		if (KeyIdx > 0)
+		if (KeyIdx > 0 && (SplineDrawingMode == ESplineDrawingMode::JustLine || SplineDrawingMode == ESplineDrawingMode::DrawAll))
 		{
 			// For constant interpolation - don't draw ticks - just draw dotted line.
 			if (SplineInfo.Points[KeyIdx - 1].InterpMode == CIM_Constant)

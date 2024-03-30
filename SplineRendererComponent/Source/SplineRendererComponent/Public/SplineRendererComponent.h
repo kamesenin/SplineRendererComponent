@@ -4,6 +4,14 @@
 #include "Components/SplineComponent.h"
 #include "SplineRendererComponent.generated.h"
 
+UENUM()
+enum class ESplineDrawingMode : uint8
+{
+	DrawAll,
+	JustLine,
+	JustPoints,
+};
+
 UCLASS(hidecategories = (Object, LOD), meta = (BlueprintSpawnableComponent))
 class SPLINERENDERERCOMPONENT_API USplineRendererComponent : public USplineComponent
 {
@@ -20,11 +28,11 @@ public:
 	UPROPERTY(EditAnywhere, meta = (DisplayName = "Line Color"))
 	FLinearColor LineColor;
 
-	UPROPERTY(EditAnywhere, meta = (DisplayName = "Draw Points"))
-	bool DrawPoints;
+	UPROPERTY(EditAnywhere, meta = (DisplayName = "Draw Mode"))
+	ESplineDrawingMode SplineDrawingMode;
 
 private:
-	static void DrawSpline(FPrimitiveDrawInterface* PDI, const FSceneView* View, const FInterpCurveVector& SplineInfo, const FMatrix& LocalToWorld, const FLinearColor& LineColor, uint8 DepthPriorityGroup, const float Thickness, const bool DrawPoints);
+	static void DrawSpline(FPrimitiveDrawInterface* PDI, const FSceneView* View, const FInterpCurveVector& SplineInfo, const FMatrix& LocalToWorld, const FLinearColor& LineColor, uint8 DepthPriorityGroup, const float Thickness, const ESplineDrawingMode SplineDrawingMode);
 };
 
 
