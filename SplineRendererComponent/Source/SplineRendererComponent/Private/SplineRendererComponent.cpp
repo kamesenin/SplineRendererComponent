@@ -3,6 +3,7 @@
 USplineRendererComponent::USplineRendererComponent()
 	: LineThickness(1.f)
 	, LineColor(FLinearColor::White)
+	, DrawPoints(true)
 {}
 
 FPrimitiveSceneProxy* USplineRendererComponent::CreateSceneProxy()
@@ -21,6 +22,7 @@ FPrimitiveSceneProxy* USplineRendererComponent::CreateSceneProxy()
 			, SplineInfo(InComponent->SplineCurves.Position)
 			, LineColor(InComponent->LineColor)
 			, Thickness(InComponent->LineThickness)
+			, DrawPoints(InComponent->DrawPoints)
 		{}
 
 		virtual void GetDynamicMeshElements(const TArray<const FSceneView*>& Views, const FSceneViewFamily& ViewFamily, uint32 VisibilityMap, FMeshElementCollector& Collector) const override
@@ -48,7 +50,7 @@ FPrimitiveSceneProxy* USplineRendererComponent::CreateSceneProxy()
 						continue;
 					}
 
-					USplineRendererComponent::DrawSpline(PDI, View, SplineInfo, LocalToWorld, LineColor, SDPG_World, Thickness);
+					USplineRendererComponent::DrawSpline(PDI, View, SplineInfo, LocalToWorld, LineColor, SDPG_World, Thickness, DrawPoints);
 				}
 			}
 		}
@@ -70,12 +72,13 @@ FPrimitiveSceneProxy* USplineRendererComponent::CreateSceneProxy()
 		FInterpCurveVector SplineInfo;
 		FLinearColor LineColor;
 		float Thickness;
+		bool DrawPoints;
 	};
 
 	return new FSplineSceneProxy(this);
 }
 
-void USplineRendererComponent::DrawSpline(FPrimitiveDrawInterface* PDI, const FSceneView* View, const FInterpCurveVector& SplineInfo, const FMatrix& LocalToWorld, const FLinearColor& LineColor, uint8 DepthPriorityGroup, float Thickness)
+void USplineRendererComponent::DrawSpline(FPrimitiveDrawInterface* PDI, const FSceneView* View, const FInterpCurveVector& SplineInfo, const FMatrix& LocalToWorld, const FLinearColor& LineColor, uint8 DepthPriorityGroup, const float Thickness, const bool DrawPoints)
 {
 	const int32 GrabHandleSize = 6;
 	FVector OldKeyPos(0);
@@ -86,11 +89,14 @@ void USplineRendererComponent::DrawSpline(FPrimitiveDrawInterface* PDI, const FS
 	{
 		const FVector NewKeyPos = LocalToWorld.TransformPosition(SplineInfo.Eval(static_cast<float>(KeyIdx), FVector(0)));
 
-		// Draw the keypoint
-		if (KeyIdx < NumPoints)
+		if (DrawPoints == true)
 		{
-			PDI->DrawPoint(NewKeyPos, LineColor, GrabHandleSize, DepthPriorityGroup);
-		}
+			// Draw the keypoint
+			if (KeyIdx < NumPoints)
+			{
+				PDI->DrawPoint(NewKeyPos, LineColor, GrabHandleSize, DepthPriorityGroup);
+			}
+		}		
 
 		// If not the first keypoint, draw a line to the previous keypoint.
 		if (KeyIdx > 0)

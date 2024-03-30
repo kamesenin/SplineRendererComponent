@@ -20,8 +20,11 @@ public:
 	UPROPERTY(EditAnywhere, meta = (DisplayName = "Line Color"))
 	FLinearColor LineColor;
 
+	UPROPERTY(EditAnywhere, meta = (DisplayName = "Draw Points"))
+	bool DrawPoints;
+
 private:
-	static void DrawSpline(FPrimitiveDrawInterface* PDI, const FSceneView* View, const FInterpCurveVector& SplineInfo, const FMatrix& LocalToWorld, const FLinearColor& LineColor, uint8 DepthPriorityGroup, float Thickness);
+	static void DrawSpline(FPrimitiveDrawInterface* PDI, const FSceneView* View, const FInterpCurveVector& SplineInfo, const FMatrix& LocalToWorld, const FLinearColor& LineColor, uint8 DepthPriorityGroup, const float Thickness, const bool DrawPoints);
 };
 
 

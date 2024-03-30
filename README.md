@@ -23,8 +23,9 @@ Follow these steps:
 
 1) Add Spline Renderer Component to an Actor blueprint:
 <img src="SplineRendererComponent/Resources/AddComponent.png">
-2) Set Thickness and Line Color under Spline Renderer Component:
+2) Set Thickness, Point drawing and Line Color under Spline Renderer Component:
 <img src="SplineRendererComponent/Resources/Example1.png">
+<img src="SplineRendererComponent/Resources/Example2.png">
 3) Enjoy :)
 
 Tested under Unreal 5.x
